@@ -6,47 +6,41 @@ class AlarmClock {
 
 	addClock(time, callback, id) {
 		if (id == undefined) {
-    		throw new Errow('не определён id будильника')
-  		};
+			throw new Errow('не определён id будильника')
+		};
 
-  		for (const i in this.alarmCollection) {
-    		if (this.alarmCollection[i].id == id) {
-      			console.error();
-      			return}
-    	};
+		if (this.alarmCollection.some((item) => item.id == id) == true) {
+			console.error('Будильник с таким id уже существует');
+			return
+		};
 
-    	this.alarmCollection.push({
-      		time: time,
-      		callback: callback,
-      		id: id
-  		})
+		this.alarmCollection.push({time, callback, id})
 	}
 
 	removeClock(id) {
-		this.alarmCollection.filter(function(item, i, arr) {
-      		if (arr[i].id == id) {
-        		arr.splice(i,1);
-        		return true
-      		} else {
-        		return false;
-      		}
-    	})
-
+		let delPos = this.alarmCollection.findIndex((item, i, arr) => arr[i].id == id);
+		if (delPos == -1) {
+			return false
+		} else {
+			this.alarmCollection.splice(delPos, 1);
+			return true;
+		}
 	}
 
 	getCurrentFormattedTime() {
-		return((new Date()).getHours() + ':' + (new Date()).getMinutes());
-
+		return(new Date().toLocaleTimeString("ru-Ru", {
+  		hour: "2-digit",
+  		minute: "2-digit",
+		}))
+		
 	}
 
 	start() {
-		
-		function checkClock(bell) {
+		let checkClock = (bell) => {
 			if(this.getCurrentFormattedTime() == bell.time) {
 				bell.callback();
 			};
-		};
-
+		}
 		if (this.timerId == null) {
 			this.timerId = setInterval(()=> {
 				this.alarmCollection.forEach(function(item, i, arr){
@@ -54,35 +48,26 @@ class AlarmClock {
 				})
 			}, 1000)
 		}
-
 	}
-	
 
 	stop() {
-
 		if (this.timerId !== null) {
 			clearInterval(this.timerId);
 			this.timerId = null;
 		}
-
 	}
 
 	printAlarms() {
 		this.alarmCollection.forEach(function(item, i, arr){
 			console.log(item.id + ' - ' + item.time)
 		})
-
 	}
 
 	clearAlarms() {
-
 		this.stop();
 		this.alarmCollection.splice(0)
-
 	}
-
-
-}
+};
 
 
 function testCase() {
