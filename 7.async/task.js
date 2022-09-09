@@ -18,7 +18,7 @@ class AlarmClock {
 	}
 
 	removeClock(id) {
-		let delPos = this.alarmCollection.findIndex((item, i, arr) => arr[i].id == id);
+		let delPos = this.alarmCollection.findIndex((item) => item.id == id);
 		if (delPos == -1) {
 			return false
 		} else {
@@ -43,8 +43,8 @@ class AlarmClock {
 		}
 		if (this.timerId == null) {
 			this.timerId = setInterval(()=> {
-				this.alarmCollection.forEach(function(item, i, arr){
-					checkClock(bell);
+				this.alarmCollection.forEach(function(item){
+					checkClock(item);
 				})
 			}, 1000)
 		}
